@@ -31,14 +31,14 @@ def DFS(matrix, start, end):
         temp = stack[len(stack)-1]
         if end == temp:
             break
-        check = True             
+        check = True  #Kiểm tra vị trí đó còn đỉnh nào chưa đi qua hay không           
         for i in range(len(matrix[temp])):
             if matrix[temp][i] != 0 and i not in visited:
                 visited[i] = temp
                 stack.append(i)
                 check = False
                 break
-        if check:
+        if check: #True: đã đi qua hết các đỉnh khác mà đỉnh đó có thể đi qua => loại đỉnh đó ra stack
             stack.pop()
 
     if end in visited:
@@ -124,23 +124,21 @@ def UCS(matrix, start, end):
     if start == end:
         return visited, path
     
-    distance[start] = [start, -1] #value[0]: Lưu đỉnh trước đó đi tới, value[1]: lưu khoảng cách
-    open = []
-    open.append(start)
+    distance[start] = [start, -1] #value[0]: Lưu đỉnh kề trước đó đi tới, value[1]: lưu khoảng cách từ start đó tới đỉnh đó
+
     cost = 0 #Dùng lưu khoảng cách mỗi bước làm tại vị trí đang xét với vị trí start
     targetVetex = start #Dùng lưu đỉnh đang xét
 
-    while len(open) <= len(matrix) and distance and end not in visited: 
-        del distance[targetVetex] #Xóa đường đi đã lựa chọn ra khỏi distance
-        temp = open[len(open)-1]
+    while distance and end not in visited:      
         for i in range(len(matrix[0])):
-            if matrix[temp][i] != 0 and i not in visited:
+            if matrix[targetVetex][i] != 0 and i not in visited: #Đỉnh đó có đường đi và vẫn chưa trong tập đỉnh đi qua(visited)
                 if i not in distance:
-                    distance[i] = [temp, matrix[temp][i] + cost]
+                    distance[i] = [targetVetex, matrix[targetVetex][i] + cost]
                 else:
-                    if distance.get(i)[1] > matrix[temp][i] + cost: #Nếu K/c đang xét nhỏ hơn K/c mà đi tới đỉnh đó trong dic, ta cập nhật lại k/c
-                        distance[i] = [temp, matrix[temp][i] + cost]
-        
+                    if distance.get(i)[1] > matrix[targetVetex][i] + cost: #Nếu K/c đang xét nhỏ hơn K/c mà đi tới đỉnh đó trong dic, ta cập nhật lại k/c
+                        distance[i] = [targetVetex, matrix[targetVetex][i] + cost]
+
+        del distance[targetVetex] #Xóa đường đi đã lựa chọn ra khỏi distance
         if len(distance) > 0:
             targetVetex = list(distance.keys())[0] #Lấy đỉnh đầu tiên trong dictionary để khởi tạo tìm giá trị nhỏ nhất
             vetexLast = list(distance.values())[0][0] #Lấy đỉnh đã đi trước khi tới đỉnh đầu tiên trong dic
@@ -152,10 +150,7 @@ def UCS(matrix, start, end):
                     vetexLast = value[0]
                     minDistance = value[1]
             cost = minDistance
-            if targetVetex not in open:
-                open.append(targetVetex)
             visited[targetVetex] = vetexLast
-
    
     if end in visited:
         path.append(end)
@@ -195,23 +190,19 @@ def GBFS(matrix, start, end):
     if start == end:
         return visited, path
     
-    open = []
     distance[start] = [start, -1] #value[0]: Lưu đỉnh trước đó, value[1]: lưu khoảng cách
-    open.append(start)
     
     targetVetex = start
-    while len(open) <= len(matrix) and distance and end not in visited: 
+    while distance and end not in visited: 
 
         del distance[targetVetex] #Xóa đường đi đã lựa chọn ra khỏi distance
-        temp = open[len(open)-1] #Lấy đỉnh đang xét
-
         for i in range(len(matrix[0])):
-            if matrix[temp][i] != 0 and i not in visited:
-                if i not in distance:
-                    distance[i] = [temp, matrix[temp][i]]
-                else:
-                    if distance.get(i)[1] > matrix[temp][i]:
-                        distance[i] = [temp, matrix[temp][i]]
+            if matrix[targetVetex][i] != 0 and i not in visited: #Đỉnh đó có đường đi và vẫn chưa trong tập đỉnh đi qua(visited)
+                if i not in distance: 
+                    distance[i] = [targetVetex, matrix[targetVetex][i]]
+                else: 
+                    if distance.get(i)[1] > matrix[targetVetex][i]: #Nếu K/c đang xét nhỏ hơn K/c mà đi tới đỉnh đó trong dic, ta cập nhật lại k/c
+                        distance[i] = [targetVetex, matrix[targetVetex][i]]
 
         if len(distance) > 0:
             targetVetex = list(distance.keys())[0] #Lấy đỉnh đầu tiên trong dictionary để khởi tạo tìm giá trị nhỏ nhất
@@ -223,8 +214,6 @@ def GBFS(matrix, start, end):
                     targetVetex = key
                     vetexLast = value[0]
                     minDistance = value[1]
-            if targetVetex not in open:
-                open.append(targetVetex)
             visited[targetVetex] = vetexLast
 
     if end in visited:
@@ -268,29 +257,25 @@ def Astar(matrix, start, end, pos):
     if start == end:
         return visited, path
     
-    open = []
-    distance[start] = [start, -1, -1] #value[0]: lưu đỉnh trước kề, value[1]: lưu k/c có hereutic, value[2]: lưu k/c ko có hereutic
-    open.append(start)
-    
-    targetVetex = start
-    cost = 0 #dùng lưu khoảng cách mỗi bước làm tại vị trí đang xét
-    while len(open) <= len(matrix) and distance and end not in visited: 
-        del distance[targetVetex] #Xóa đường đi đã lựa chọn ra khỏi distance
-        temp = open[len(open)-1] #Lấy đỉnh đang xét
-
+    distance[start] = [start, -1, -1] #value[0]: lưu đỉnh trước kề, value[1]: lưu k/c có hereutic,
+                                      #value[2]: lưu k/c ko có hereutic tính từ đỉnh start tới đỉnh đang xét 
+    targetVetex = start #Đỉnh đang xét
+    cost = 0 #Dùng lưu khoảng cách mỗi bước làm tại vị trí đang xét
+    while distance and end not in visited:
         for i in range(len(matrix[0])):
-            if matrix[temp][i] != 0 and i not in visited:
+            if matrix[targetVetex][i] != 0 and i not in visited:
                 if i not in distance:
-                    distance[i] = [temp, matrix[temp][i] + h[i] + cost, matrix[temp][i] + cost]
+                    distance[i] = [targetVetex, matrix[targetVetex][i] + h[i] + cost, matrix[targetVetex][i] + cost]
                 else:
-                    if distance.get(i)[2] > matrix[temp][i]:
-                        distance[i] = [temp, matrix[temp][i] + h[i] + cost, matrix[temp][i] + cost]
+                    if distance.get(i)[1] > matrix[targetVetex][i] + cost + h[i]:
+                        distance[i] = [targetVetex, matrix[targetVetex][i] + h[i] + cost, matrix[targetVetex][i] + cost]
 
+        del distance[targetVetex] #Xóa đường đi đã lựa chọn trước đó ra khỏi distance
         if len(distance) > 0:
             targetVetex = list(distance.keys())[0] #Lấy đỉnh đầu tiên trong dictionary để khởi tạo tìm giá trị nhỏ nhất
             vetexLast = list(distance.values())[0][0] #Lấy đỉnh đã đi trước khi tới đỉnh đầu tiên trong dic
             minDistance = list(distance.values())[0][1] #Lấy giá trị k/c có hereutic đầu tiên của dic
-            costMin = list(distance.values())[0][2] # Dùng lưu khoảng cách của phần tử dic đầu tiên đến vị trí start
+            costMin = list(distance.values())[0][2] #Dùng lưu khoảng cách của phần tử dic đầu tiên đến vị trí start
 
             for key, value in distance.items():
                 if minDistance > value[1]:  
@@ -300,10 +285,8 @@ def Astar(matrix, start, end, pos):
                     costMin = value[2]
 
             cost = costMin
-            if targetVetex not in open:
-                open.append(targetVetex)
             visited[targetVetex] = vetexLast
-
+    
     if end in visited:
         path.append(end)
         while visited[end] != -1:
