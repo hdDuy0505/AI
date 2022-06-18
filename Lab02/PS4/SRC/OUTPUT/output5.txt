@@ -1,0 +1,15 @@
+7
+K OR -M
+K OR O
+N OR -O
+N
+-M
+M OR N
+O
+5
+K OR -O
+K
+K OR M
+-O
+{}
+YES

@@ -1,0 +1,12 @@
+4
+-M OR N OR S
+Y
+-M OR N OR -X
+-M OR -Y
+4
+-M OR S
+-M OR N
+-M OR -X
+-M
+0
+NO

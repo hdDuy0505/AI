@@ -1,0 +1,7 @@
+K OR N OR  -M
+5
+K  OR -N
+-M OR  N
+N   OR O
+M OR -O
+-K OR N

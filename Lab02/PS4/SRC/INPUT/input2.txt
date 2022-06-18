@@ -1,0 +1,7 @@
+-X
+5
+Y OR S
+-Y OR  -M  OR N
+-X OR Y
+-S
+-N
