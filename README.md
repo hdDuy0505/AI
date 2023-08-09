@@ -1,2 +1,2 @@
 # AI - 19_3
-Giảng viên: GS.TSLÊ HOÀI BẮC - HCMUS
+Giảng viên: GS.TS LÊ HOÀI BẮC - HCMUS
